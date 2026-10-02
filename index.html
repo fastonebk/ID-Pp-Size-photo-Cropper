@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ID photo cropper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="intro">
+    <h1>ID photo cropper</h1>
+    <p>Upload portraits. Each one is framed at 300 × 378 px (1 × 1.26 in at 300 DPI) with the head centred and the shoulders in view, then saved as a JPG with the original filename.</p>
+    <p class="status" id="detectorStatus" role="status">Face detector: loads when you add the first photo.</p>
+  </div>
+  <figure class="sample" aria-label="Composition guide">
+    <svg viewBox="0 0 300 378" role="img" aria-label="ID frame: head in the upper-middle, shoulders at the bottom">
+      <rect x="1" y="1" width="298" height="376" class="s-frame"/>
+      <line x1="150" y1="0" x2="150" y2="378" class="s-dash"/>
+      <ellipse id="sampleHead" cx="150" cy="151" rx="85" ry="125" class="s-head"/>
+      <line id="sampleEye" x1="40" y1="1" x2="260" y2="1" class="s-dash"/>
+      <path d="M0 372 C8 330 70 312 112 304 L188 304 C230 312 292 330 300 372" class="s-head"/>
+    </svg>
+    <figcaption>Safe area: head in the upper-middle, shoulders along the bottom.</figcaption>
+  </figure>
+</header>
+
+<main>
+  <section class="intake">
+    <label class="drop" id="drop" tabindex="0">
+      <input type="file" id="fileInput" accept="image/*" multiple>
+      <strong>Drop photos here, or choose files</strong>
+      <span>JPG, PNG or WebP. Photos never leave your browser.</span>
+    </label>
+    <div class="settings">
+      <label for="headSize">Head size in frame: <output id="headSizeOut">66%</output></label>
+      <input type="range" id="headSize" min="55" max="75" value="66">
+      <small>Applies to photos you haven't edited by hand.</small>
+    </div>
+  </section>
+
+  <section class="bar" id="bar" hidden>
+    <p id="count"></p>
+    <div class="actions">
+      <button type="button" class="btn primary" id="zipBtn">Download all as ZIP</button>
+      <button type="button" class="btn" id="clearBtn">Clear all</button>
+    </div>
+  </section>
+
+  <section class="grid" id="grid" aria-live="polite"></section>
+</main>
+
+<dialog id="editor" aria-label="Edit crop">
+  <div class="ed">
+    <div class="stage">
+      <canvas id="edCanvas" width="450" height="567"></canvas>
+      <svg id="edGuide" viewBox="0 0 300 378" aria-hidden="true"></svg>
+    </div>
+    <div class="panel">
+      <h2 id="edName">Edit crop</h2>
+      <p class="hint">Drag the photo to move it, scroll to zoom. The saved image is always 300 × 378 px.</p>
+      <div class="row">
+        <button type="button" class="btn" data-act="zoomIn">Zoom +</button>
+        <button type="button" class="btn" data-act="zoomOut">Zoom -</button>
+      </div>
+      <div class="pad">
+        <button type="button" class="btn up" data-act="up">Move Up</button>
+        <button type="button" class="btn left" data-act="left">Move Left</button>
+        <button type="button" class="btn right" data-act="right">Move Right</button>
+        <button type="button" class="btn down" data-act="down">Move Down</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" data-act="reset">Reset</button>
+        <button type="button" class="btn" data-act="auto">Auto Center</button>
+      </div>
+      <label class="check"><input type="checkbox" id="guideToggle" checked> Show safe-area guide</label>
+      <ul class="checks" id="edChecks"></ul>
+      <div class="row end">
+        <button type="button" class="btn" id="edCancel">Cancel</button>
+        <button type="button" class="btn primary" id="edSave">Save</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
